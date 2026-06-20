@@ -1,0 +1,4 @@
+# Persona config for the v1 vertical: data stack documentation assistant.
+# Built in Phase 2. See /docs/PROJECT_SCOPE.md.
+name: data_stack_assistant
+description: "Answers questions about dbt, Snowflake, and Matillion using public documentation."
