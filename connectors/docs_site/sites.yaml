@@ -1,0 +1,42 @@
+# One profile per documentation source. See adr/0007-html-fetch-and-parse.md for why each
+# site is scoped the way it is. Widening/narrowing a corpus is an edit here, not in code.
+
+dbt:
+  base_url: https://docs.getdbt.com
+  sitemap_url: https://docs.getdbt.com/sitemap.xml
+  content_selector: article
+  include:
+    - /docs/
+    - /reference/
+    - /best-practices/
+  exclude: []
+  # Docusaurus UI chrome that otherwise prefixes/suffixes every dbt page with identical
+  # boilerplate ("Copy page as Markdown for LLMs", "On this page", "Was this page
+  # helpful?"). Matched on class prefix because Docusaurus appends a per-build hash.
+  strip_selectors:
+    - '[class*="copyPageContainer"]'
+    - '[class*="tocCollapsible"]'
+    - '[class*="feedbackContainer"]'
+    - .faq-container
+    - .theme-doc-footer
+  # dbt's HTTP Last-Modified reflects site deploy time, not content change; its footer
+  # <time> element carries the real authored date.
+  date_selector: time[datetime]
+
+snowflake:
+  base_url: https://docs.snowflake.com
+  sitemap_url: https://docs.snowflake.com/en/sitemap.xml
+  content_selector: 'article[data-testid="article-content"]'
+  include:
+    - /en/user-guide/
+  exclude: []
+
+matillion:
+  base_url: https://docs.matillion.com
+  sitemap_url: https://docs.matillion.com/sitemap.xml
+  content_selector: article.md-content__inner
+  include:
+    - /data-productivity-cloud/
+    - /metl/
+  exclude:
+    - /assets/snippets/

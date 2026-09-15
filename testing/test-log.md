@@ -34,3 +34,21 @@ Each entry ties back to an Issue/ADR/acceptance criterion, and carries a Result,
 |---|------|-------------|---------|--------|------|----------|
 | A5 | Automated | `docker compose up -d --wait` brings Qdrant healthy | Issue #9 | Pass | 2026-09-15 | `docker compose up -d --wait` → `Container rag-platform-qdrant Healthy`; `curl localhost:6333/readyz` → "all shards are ready"; `docker compose ps` showed `Up ... (healthy)`; torn down after with `docker compose down` |
 | H4 | Human | Board shows four correct columns with Phase 1 issues in Backlog | Stage 6, Issues #11-#16 | Pass | 2026-09-15 | Board https://github.com/orgs/salas-projects/projects/1 has columns Backlog/In Progress/In Review/Done; `gh project item-list` confirms Issues #11-#16 (connector interface, chunking, embedding interface, Qdrant wrapper, retrieval logic, end-to-end CLI proof) all landed in Backlog |
+
+## #11 — Connector interface + docs_site connector
+
+Automated tests are hermetic: all HTTP is mocked via `httpx.MockTransport` against saved fixtures in
+`tests/fixtures/docs_site/`, so CI never touches the three documentation sites.
+
+| # | Type | Description | Ties to | Result | Date | Evidence |
+|---|------|-------------|---------|--------|------|----------|
+| A6 | Automated | Sitemap XML parses; namespaced `<loc>`/`<lastmod>` extracted | Issue #11, ADR-0007 | Pass | 2026-09-15 | `test_parse_sitemap_extracts_namespaced_loc_and_lastmod`, `test_parse_sitemap_handles_missing_lastmod` |
+| A7 | Automated | include/exclude + robots filtering rejects Snowflake `commands-*`/release-notes, Matillion `private-docs`/asset fragments, dbt `/learn` and `/blog` | Issue #11, ADR-0007 | Pass | 2026-09-15 | `test_discover_applies_scope_and_robots_end_to_end`, `test_discover_snowflake_excludes_sql_reference_and_release_notes`, 6 × `test_robots_checker_*` |
+| A8 | Automated | Extraction returns real prose per site fixture; nav/script/`¶`/markup stripped | Issue #11, ADR-0007 | Pass | 2026-09-15 | `test_extract_article_returns_clean_prose` (3 params: dbt/Snowflake/Matillion) |
+| A9 | Automated | `last_updated` chain: in-page date → HTTP header → sitemap lastmod → None, incl. Snowflake-yields-None case | Issue #11, ADR-0007 | Pass | 2026-09-15 | 5 × `test_resolve_last_updated_*`, 2 × `test_extract_page_date_*` |
+| A10 | Automated | `RawDocument` shape, frozen-ness, and stable `content_hash` | Issue #11 | Pass | 2026-09-15 | `tests/test_ingestion_base.py` (8 tests), `test_fetch_produces_well_formed_document_with_stable_hash` |
+| A11 | Automated | Retry/429/404 handling and disk-cache reuse via MockTransport | Issue #11 | Pass | 2026-09-15 | `test_fetch_retries_on_429_then_succeeds`, `test_fetch_gives_up_after_max_retries`, `test_fetch_returns_none_for_404`, `test_fetch_uses_cache_on_second_call` |
+| A12 | Automated | Regression guard: dbt UI chrome stripped, real body content retained | Issue #11, ADR-0007 | Pass | 2026-09-15 | `test_strip_selectors_remove_dbt_ui_chrome` — added after H5 found the defect |
+| A13 | Automated | `uv run ruff check .` + `uv run ruff format --check .` clean | Issue #11 | Pass | 2026-09-15 | "All checks passed!" / "34 files already formatted" |
+| A14 | Automated | Full suite green | Issue #11 | Pass | 2026-09-15 | `uv run pytest` — 39 passed |
+| H5 | Human | Live crawl spot-check against all three real sites; sampled text is article prose with no boilerplate leakage | Issue #11, ADR-0007 | Pass | 2026-09-15 | `uv run python -m connectors.docs_site --source {dbt,snowflake,matillion} --limit 2 --no-cache`. **Found 2 real defects on first run** — (1) every dbt page prefixed with ~12k chars of page-action toolbar + TOC boilerplate, (2) dbt `last_updated` reflecting site deploy time (3 pages minutes apart) rather than the authored date. Both fixed via `strip_selectors`/`date_selector` in `sites.yaml`; re-run shows clean prose previews on all three, dbt dated 2026-09-10 (authored), Snowflake correctly `None`, Matillion from sitemap lastmod. |

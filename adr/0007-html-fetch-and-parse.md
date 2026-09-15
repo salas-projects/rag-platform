@@ -42,9 +42,9 @@ Supporting decisions:
 
 - **Discovery via sitemap**, parsed with the standard library's `xml.etree.ElementTree` — no crawler
   and no additional dependency.
-- **`robots.txt` is enforced programmatically** with the standard library's `urllib.robotparser`,
-  fetched at runtime rather than transcribed into a hand-maintained exclusion list, so the rules
-  cannot silently drift out of date.
+- **`robots.txt` is enforced programmatically**, fetched at runtime rather than transcribed into a
+  hand-maintained exclusion list, so the rules cannot silently drift out of date. See the amendment
+  below for why this is a small purpose-built matcher rather than `urllib.robotparser`.
 - **Scoped corpus via config include-patterns**: dbt `/docs/`, `/reference/`, `/best-practices/`;
   Snowflake `/en/user-guide/`; Matillion `/data-productivity-cloud/`, `/metl/`. That is roughly 3,740
   pages of the ~11,100 the sitemaps list. Snowflake's `/en/release-notes/` (1,863 near-duplicate
@@ -73,3 +73,35 @@ The scoped corpus means some questions — particularly about specific SQL comma
 grounding and should be answered with "not in the indexed documentation" rather than a guess. The
 include-patterns can be widened once Phase 5's evaluation set can actually measure whether doing so
 helps or hurts retrieval quality, instead of guessing now.
+
+---
+
+**Amendment (implementation of #11):** two claims above were corrected by what the implementation
+actually found. Both are recorded here rather than silently edited away, since the original reasoning
+was reasonable and the corrections are the useful part.
+
+1. **`urllib.robotparser` is not fit for this purpose.** The original decision named the standard
+   library's parser. It silently ignores `*` wildcards in rule paths: given Snowflake's
+   `Disallow: /en/sql-reference/commands-*`, `RobotFileParser.can_fetch()` returns **True** for
+   `/en/sql-reference/commands-table`. Non-wildcard rules (`/en/INCLUDE/`) work correctly, so the
+   failure is invisible unless specifically tested. A scraper that quietly ignores a disallow rule is
+   worse than one with no robots support at all, so `RobotsChecker` in
+   `connectors/docs_site/connector.py` implements RFC 9309 matching directly — wildcards, `$` end
+   anchors, longest-match-wins, and Allow-beats-Disallow on ties — in roughly 30 lines, with tests
+   covering each rule. The stdlib parser is not used.
+
+2. **The `last_updated` fallback chain needed an extra, higher-priority step.** The original chain was
+   HTTP `Last-Modified` → sitemap `lastmod` → `None`. Live verification showed dbt pages fetched
+   minutes apart all reporting `Last-Modified` timestamps within the same 20-minute window — that
+   header reflects *site deploy* time on a statically-built docs site, not content change, and would
+   have stamped the entire dbt corpus with one meaningless date. dbt's own footer carries the authored
+   date in a `<time datetime="...">` element. The chain is now **in-page date → HTTP `Last-Modified` →
+   sitemap `lastmod` → `None`**, with the per-site `date_selector` in `sites.yaml`. Snowflake still
+   supplies none of the three and correctly resolves to `None`.
+
+Live verification also caught a content-quality defect that fixture-based tests alone would have
+missed: every dbt page began with its page-action toolbar and on-this-page TOC ("Copy page as Markdown
+for LLMs", "Was this page helpful?"), roughly 12,000 characters of identical boilerplate that would
+have prefixed every dbt chunk and degraded retrieval. Handled by a per-site `strip_selectors` list in
+`sites.yaml`, matched on class *prefix* because Docusaurus appends a per-build hash to class names.
+Snowflake and Matillion needed no stripping.
