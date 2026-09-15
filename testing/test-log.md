@@ -26,4 +26,11 @@ Each entry ties back to an Issue/ADR/acceptance criterion, and carries a Result,
 | # | Type | Description | Ties to | Result | Date | Evidence |
 |---|------|-------------|---------|--------|------|----------|
 | A4 | Automated | CI workflow (`ci` job: uv sync, ruff check, ruff format --check, pytest) runs green on a PR | Issue #6, ADR-0006 | Pass | 2026-09-15 | PR #7 run 35018260386 — `ci` check passed in 11s: https://github.com/salas-projects/rag-platform/actions/runs/35018260386 |
-| H3 | Human | A **failing** CI run blocks merge once `ci` is added as a required status check on ruleset `main-pr` | Issue #6, ADR-0006 | Pending | | Requires a follow-up check after this PR merges and the required-check rule is added |
+| H3 | Human | A **failing** CI run blocks merge once `ci` is added as a required status check on ruleset `main-pr` | Issue #6, ADR-0006 | Pass | 2026-09-15 | Ruleset `main-pr` updated with `required_status_checks: [ci]`. Throwaway PR #8 (deliberately broken ruff formatting) got `ci` conclusion FAILURE and `mergeStateStatus: BLOCKED`; closed without merging. |
+
+## #9 — Phase 0: install Docker and stand up Qdrant
+
+| # | Type | Description | Ties to | Result | Date | Evidence |
+|---|------|-------------|---------|--------|------|----------|
+| A5 | Automated | `docker compose up -d --wait` brings Qdrant healthy | Issue #9 | Pending | | Blocked on Docker being installed locally |
+| H4 | Human | Board shows four correct columns with Phase 1 issues in Backlog | Stage 6 | Pending | | To be recorded once Phase 1 issues are staged |
