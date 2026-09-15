@@ -11,6 +11,7 @@ Each entry ties back to an Issue/ADR/acceptance criterion, and carries a Result,
 | # | Type | Description | Ties to | Result | Date | Evidence |
 |---|------|-------------|---------|--------|------|----------|
 | H1 | Human | `main-pr` ruleset configuration mechanically blocks direct pushes to `main` (verified via config inspection, not a live push — a live test was rejected as too risky since `non_fast_forward` would make an accidental landing unrevertable) | Issue #1, PROCESS.md | Pass | 2026-09-15 | `gh api repos/salas-projects/rag-platform/rules/branches/main` shows active `pull_request` + `non_fast_forward` rules, `bypass_actors: []`, `current_user_can_bypass: "never"` |
+| H2 | Human | PR #1 merges cleanly under the `main-pr` ruleset with 0 required approvals (no self-approval deadlock, no unattributed-changes deadlock) | Issue #1 | Pass | 2026-09-15 | PR #2 merged clean at b985e26 — `mergeStateStatus: CLEAN`, `mergeable: MERGEABLE`, no review-required or unattributed-changes block; https://github.com/salas-projects/rag-platform/pull/2 |
 | H2 | Human | PR #1 merges cleanly under the `main-pr` ruleset with 0 required approvals (no self-approval deadlock, no unattributed-changes deadlock) | Issue #1 | Pending | | |
 
 ## #4 — Pin Python toolchain (uv, 3.12, ruff, pytest)
