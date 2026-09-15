@@ -25,5 +25,5 @@ Each entry ties back to an Issue/ADR/acceptance criterion, and carries a Result,
 
 | # | Type | Description | Ties to | Result | Date | Evidence |
 |---|------|-------------|---------|--------|------|----------|
-| A4 | Automated | CI workflow (`ci` job: uv sync, ruff check, ruff format --check, pytest) runs green on a PR | Issue #6, ADR-0006 | Pending | | To be filled in once PR's Actions run completes |
+| A4 | Automated | CI workflow (`ci` job: uv sync, ruff check, ruff format --check, pytest) runs green on a PR | Issue #6, ADR-0006 | Pass | 2026-09-15 | PR #7 run 35018260386 — `ci` check passed in 11s: https://github.com/salas-projects/rag-platform/actions/runs/35018260386 |
 | H3 | Human | A **failing** CI run blocks merge once `ci` is added as a required status check on ruleset `main-pr` | Issue #6, ADR-0006 | Pending | | Requires a follow-up check after this PR merges and the required-check rule is added |
