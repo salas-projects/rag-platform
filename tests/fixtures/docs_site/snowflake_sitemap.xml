@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://docs.snowflake.com/en/user-guide/tables-storage-considerations</loc>
+  </url>
+  <url>
+    <loc>https://docs.snowflake.com/en/user-guide/data-load-overview</loc>
+  </url>
+  <url>
+    <loc>https://docs.snowflake.com/en/sql-reference/commands-table</loc>
+  </url>
+  <url>
+    <loc>https://docs.snowflake.com/en/release-notes/2026/8_45</loc>
+  </url>
+  <url>
+    <loc>https://docs.snowflake.com/en/INCLUDE/some-fragment</loc>
+  </url>
+</urlset>

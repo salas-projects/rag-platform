@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /legal/
+Disallow: /metl-containers/
+Disallow: /metl/private-docs/
+Disallow: /data-productivity-cloud/private-docs/
