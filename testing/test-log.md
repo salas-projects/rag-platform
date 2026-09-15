@@ -33,4 +33,4 @@ Each entry ties back to an Issue/ADR/acceptance criterion, and carries a Result,
 | # | Type | Description | Ties to | Result | Date | Evidence |
 |---|------|-------------|---------|--------|------|----------|
 | A5 | Automated | `docker compose up -d --wait` brings Qdrant healthy | Issue #9 | Pass | 2026-09-15 | `docker compose up -d --wait` → `Container rag-platform-qdrant Healthy`; `curl localhost:6333/readyz` → "all shards are ready"; `docker compose ps` showed `Up ... (healthy)`; torn down after with `docker compose down` |
-| H4 | Human | Board shows four correct columns with Phase 1 issues in Backlog | Stage 6 | Pending | | To be recorded once Phase 1 issues are staged |
+| H4 | Human | Board shows four correct columns with Phase 1 issues in Backlog | Stage 6, Issues #11-#16 | Pass | 2026-09-15 | Board https://github.com/orgs/salas-projects/projects/1 has columns Backlog/In Progress/In Review/Done; `gh project item-list` confirms Issues #11-#16 (connector interface, chunking, embedding interface, Qdrant wrapper, retrieval logic, end-to-end CLI proof) all landed in Backlog |
