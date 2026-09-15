@@ -13,3 +13,7 @@ Use Qdrant, self-hosted via Docker. Clean Python client, supports metadata filte
 ## Consequences
 
 The core stays portable across verticals and customers. Self-hosting means we own uptime/backups once this is customer-facing — deferred until that's a real problem.
+
+---
+
+**Update (see ADR-0004):** The project's purpose has shifted from a commercial multi-tenant platform to a portfolio/credibility build. Qdrant remains the right choice on its own merits (free, self-hostable, portable, clean Python client), but the multi-tenant-separation and multi-customer-portability reasoning above no longer applies — there is no second customer or tenant to separate.
