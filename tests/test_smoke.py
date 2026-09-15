@@ -7,3 +7,4 @@ import importlib
 def test_packages_import():
     for name in ("core", "connectors", "app"):
         importlib.import_module(name)
+x=1
